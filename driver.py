@@ -1,5 +1,6 @@
 """
 Runs the twitter bot.
+Hey, I'm doing stuff, too!
 """
 import tweepy
 import json
@@ -14,7 +15,7 @@ def main():
     auth = authenticate(api_key, api_secret, user_token, user_secret)
 
     api = tweepy.API(auth)
-    #api.update_status("...")
+    api.update_status("...")
 
     return
 
