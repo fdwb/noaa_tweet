@@ -4,6 +4,7 @@ Hey, I'm doing stuff, too!
 """
 import tweepy
 import json
+import time
 
 config_fn = "twitter_app_keys.json"
 outfile = "tweets.json"
