@@ -1,6 +1,6 @@
 """
-Runs the twitter bot.
-Hey, I'm doing stuff, too!
+This file will access NOAAs timeline, and download any new tweets that have
+yet to be stored.
 """
 import tweepy
 import json
@@ -15,18 +15,20 @@ def main():
     """
     api_key, api_secret, user_token, user_secret = get_keys(config_fn)
     auth = authenticate(api_key, api_secret, user_token, user_secret)
-
     api = tweepy.API(auth)
+
+    last_id_seen = determine_recent_id('tweets.json')
 
     user = api.get_user('NOAA')
     status_objs = []
     count = 0
-    for status in limit_handled(tweepy.Cursor(api.user_timeline, id="NOAA").items()):
+    for status in limit_handled(tweepy.Cursor(api.user_timeline, id="NOAA",
+                                                since_id=last_id_seen).items()):
         status_obj = process_noaa_tweets(status)
         status_objs.append(status_obj)
         count +=1
 
-    print(count)
+    print("Adding ", count, " new entries to tweet file.\n")
     writeout(outfile, status_objs)
 
     return
@@ -86,12 +88,28 @@ def writeout(fhandle, data_arr):
     """
     Dump tweets into file
     """
+    #First, let's read the old file.
+    with open(fhandle, "r") as f:
+        old_data = f.read()
+    #Now let's write out the new data first, and the the old data afterwards.
     with open(fhandle, "w") as f:
         for obj in data_arr:
             f.write(json.dumps(obj, ensure_ascii=False))
             f.write("\n")
+        f.write(old_data)
 
     return
+
+def determine_recent_id(fhandle):
+    """
+    Read twitter json data, and determine what the most recent str_id recorded
+    was.
+    New data will always be written first, so we only need to read the first
+    line of the file.
+    """
+    with open(fhandle, "r") as f:
+        data_line = json.loads(f.readline())
+    return [key for key in data_line][0] #there has to be a better way...
 
 def limit_handled(cursor):
     """
