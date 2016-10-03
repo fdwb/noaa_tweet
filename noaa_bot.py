@@ -8,9 +8,9 @@ import time
 
 class Noaa_Bot:
     def __init__(self):
-        self.config_fn = "twitter_app_keys.json"
-        self.tweet_data_fn = "tweets.json"
-        self.moc_data_fn = "moc_last_read_tweet.json"
+        self.config_fn = "data/twitter_app_keys.json"
+        self.tweet_data_fn = "data/tweets.json"
+        self.moc_data_fn = "data/moc_last_read_tweet.json"
         #self.moc_data_fn = 'test.json'
         self.api_key = None
         self.api_secret = None
